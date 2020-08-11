@@ -1,0 +1,74 @@
+swagger: '2.0'
+basePath: /
+host: 'localhost:8080'
+schemes: ['https']
+
+info:
+  title: locatorAPI
+  version: '1.0'
+produces:
+  - application/json
+consumes:
+  - application/json
+tags:
+  - name: locator
+    description: locator of people in or within 50 miles of a city
+responses:
+  ParseError:
+    description: When a mask can't be parsed
+  MaskError:
+    description: When any error occurs on mask
+
+paths:
+  '/people/{city}':
+    parameters:
+      - name: city
+        in: path
+        required: true
+        type: string
+    get:
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PersonDto'
+      operationId: get_people_in_or_arround_a_city
+      tags:
+        - locator
+
+definitions:
+  PersonDto:
+    description:
+      person dto that provides the properties of a person
+    type: object
+    properties:
+      id:
+        description: the id of the person
+        type: integer
+        format: int64
+      first_name:
+        description: the first name of the person
+        type: string
+      last_name:
+        description: the last name of the person
+        type: string
+      email:
+        description: the email of the person
+        type: string
+      ip_address:
+        description: the ip address of the person
+        type: string
+      latitude:
+        description: the latitude of where the person is located
+        type: number
+      longitude:
+        description: the longitude of where the person is located
+        type: number
+      location:
+        description: whenether the person is located in the city or within 50 miles
+        type: string
+        enum: [CITY,SURROUNDING_AREA]
+
+

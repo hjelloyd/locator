@@ -1,4 +1,4 @@
-# ocator
+# Locator
 
 This service is to provide an api that will return users that are in London or currently located 
 within 50 miles of London

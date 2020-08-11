@@ -1,0 +1,106 @@
+swagger: '2.0'
+basePath: /
+host: 'bpdts-test-app.herokuapp.com'
+schemes: ['https']
+
+info:
+  title: UserAPI
+  version: '1.0'
+produces:
+  - application/json
+consumes:
+  - application/json
+tags:
+  - name: userService
+    description: service that provides users
+responses:
+  ParseError:
+    description: When a mask can't be parsed
+  MaskError:
+    description: When any error occurs on mask
+
+paths:
+  '/city/{city}/users':
+    parameters:
+      - name: city
+        in: path
+        required: true
+        type: string
+    get:
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserDto'
+      operationId: get_users_by_city
+      tags:
+        - userService
+  /instructions:
+    get:
+      responses:
+        '200':
+          description: Success
+      operationId: get_instructions
+      tags:
+        - userService
+  '/user/{id}':
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+    get:
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/UserDto'
+        '404':
+          description: Not Found
+      operationId: get_user
+      tags:
+        - userService
+  /users:
+    get:
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserDto'
+      operationId: get_users
+      tags:
+        - userService
+
+definitions:
+  UserDto:
+    description:
+      User dto that provides the properties of a user
+    type: object
+    properties:
+      id:
+        description: the id of the user
+        type: integer
+        format: int64
+      first_name:
+        description: the first name of the user
+        type: string
+      last_name:
+        description: the last name of the user
+        type: string
+      email:
+        description: the email of the user
+        type: string
+      ip_address:
+        description: the ip address of the user
+        type: string
+      latitude:
+        description: the latitude of where the user is located
+        type: number
+      longitude:
+        description: the longitude of where the user is located
+        type: number
+
