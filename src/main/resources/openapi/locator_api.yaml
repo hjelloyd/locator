@@ -11,7 +11,7 @@ produces:
 consumes:
   - application/json
 tags:
-  - name: locator
+  - name: locatorInterface
     description: locator of people in or within 50 miles of a city
 responses:
   ParseError:
@@ -20,13 +20,18 @@ responses:
     description: When any error occurs on mask
 
 paths:
-  '/people/{city}':
+  /mongo/people/city/{city}:
     parameters:
       - name: city
         in: path
         required: true
         type: string
+      - name: distance
+        in: query
+        required: false
+        type: integer
     get:
+      description: finds people within a city or a given distance arround the city using a mongo based algoritim
       responses:
         '200':
           description: Success
@@ -34,9 +39,9 @@ paths:
             type: array
             items:
               $ref: '#/definitions/PersonDto'
-      operationId: get_people_in_or_arround_a_city
+      operationId: get_people_in_or_around_a_city_mongo
       tags:
-        - locator
+        - locatorInterface
 
 definitions:
   PersonDto:
@@ -70,5 +75,3 @@ definitions:
         description: whenether the person is located in the city or within 50 miles
         type: string
         enum: [CITY,SURROUNDING_AREA]
-
-

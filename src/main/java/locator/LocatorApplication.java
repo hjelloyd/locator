@@ -7,8 +7,9 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class,
-    DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class},
+@SpringBootApplication(
+//    exclude = {DataSourceAutoConfiguration.class,
+//    DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class},
     scanBasePackages = {"locator"})
 @EnableConfigurationProperties
 public class LocatorApplication {

@@ -7,9 +7,31 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-#    environment:
+    restart: on-failure
+    depends_on:
+      mongodb:
+        condition: service_started
+    links:
+      - mongodb
+    environment:
+      - SERVER.PORT=8080
+      - SPRING.DATA.MONGODB.DATABASE=locator
+      - SPRING.DATA.MONGODB.PORT=27017
+      - SPRING.DATA.MONGODB.HOST=mongodb
+      - CITY.COORDINATES.LATITUDE.LONDON=51.5076261
+      - CITY.COORDINATES.LONGITUDE.LONDON=-0.1279106
     entrypoint:
       - java
       - -Dlogging.config=classpath:/logging-config.xml
       - -jar
       - /locator.jar
+
+  mongodb:
+    image: mongo:3.6.5
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodb-data:/data/db
+    environment:
+      - storage.wiredTiger.engineConfig.cacheSizeGB=5
+    command: mongod --smallfiles

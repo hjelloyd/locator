@@ -1,7 +1,7 @@
 swagger: '2.0'
 basePath: /
 host: 'bpdts-test-app.herokuapp.com'
-schemes: ['https']
+schemes: ['http']
 
 info:
   title: UserAPI
