@@ -40,6 +40,8 @@ public class LocatorApiTest extends IntegrationTestBase {
   @MockBean
   private UserServiceApi userServiceApi;
 
+  private static final String EMAIL_ID = "@london";
+
   @BeforeEach
   void setup() {
     when(userServiceApi.getUsersByCity("London"))
@@ -72,6 +74,8 @@ public class LocatorApiTest extends IntegrationTestBase {
       assertThat(people.stream().map(PersonDto::getLocation)
           .filter(Predicate.isEqual(PersonDto.LocationEnum.SURROUNDING_AREA))
           .count()).isEqualTo(1);
+      assertThat(people.stream().map(PersonDto::getEmail)
+          .allMatch(email -> email.contains(EMAIL_ID))).isTrue();
     }
 
     @Test
@@ -91,6 +95,8 @@ public class LocatorApiTest extends IntegrationTestBase {
       assertThat(people.stream().map(PersonDto::getLocation)
           .filter(Predicate.isEqual(PersonDto.LocationEnum.SURROUNDING_AREA))
           .count()).isEqualTo(0);
+      assertThat(people.stream().map(PersonDto::getEmail)
+          .allMatch(email -> email.contains(EMAIL_ID))).isTrue();
     }
 
     @Test
@@ -129,6 +135,8 @@ public class LocatorApiTest extends IntegrationTestBase {
       assertThat(people.stream().map(PersonDto::getLocation)
           .filter(Predicate.isEqual(PersonDto.LocationEnum.SURROUNDING_AREA))
           .count()).isEqualTo(1);
+      assertThat(people.stream().map(PersonDto::getEmail)
+          .allMatch(email -> email.contains(EMAIL_ID))).isTrue();
     }
 
     @Test
@@ -148,6 +156,8 @@ public class LocatorApiTest extends IntegrationTestBase {
       assertThat(people.stream().map(PersonDto::getLocation)
           .filter(Predicate.isEqual(PersonDto.LocationEnum.SURROUNDING_AREA))
           .count()).isEqualTo(0);
+      assertThat(people.stream().map(PersonDto::getEmail)
+          .allMatch(email -> email.contains(EMAIL_ID))).isTrue();
     }
 
     @Test

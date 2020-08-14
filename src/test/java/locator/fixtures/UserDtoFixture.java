@@ -28,7 +28,7 @@ public class UserDtoFixture {
             .id(2L)
             .firstName("Jacob")
             .lastName("Strong")
-            .email("jacob.strong@LondonOntario.com")
+            .email("jacob.strong@londonontario.com")
             .ipAddress("145.56.96.0")
             .latitude(BigDecimal.valueOf(42.9825139))
             .longitude(BigDecimal.valueOf(-81.2304319)));

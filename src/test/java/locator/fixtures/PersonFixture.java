@@ -27,7 +27,7 @@ public class PersonFixture {
             .externalId(2L)
             .firstName("Jacob")
             .lastName("Strong")
-            .email("jacob.strong@LondonOntario.com")
+            .email("jacob.strong@londonontario.com")
             .ipAddress("145.56.96.0")
             .location(new GeoJsonPoint(-81.2304319, 42.9825139))
             .build(),

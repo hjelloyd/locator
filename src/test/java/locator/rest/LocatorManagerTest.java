@@ -70,8 +70,8 @@ public class LocatorManagerTest {
 
       List<PersonDto> people = locatorManager.getPeopleUsingMongo(LONDON, 50);
       assertThat(people.size()).isEqualTo(4);
-      assertThat(people.stream().map(PersonDto::getLocation)).allMatch(Predicate.isEqual(
-          PersonDto.LocationEnum.CITY));
+      assertThat(people.stream().map(PersonDto::getLocation).allMatch(Predicate.isEqual(
+          PersonDto.LocationEnum.CITY))).isTrue();
     }
   }
 
@@ -95,8 +95,8 @@ public class LocatorManagerTest {
 
       List<PersonDto> people = locatorManager.getPeopleUsingHaversine(LONDON, 50);
       assertThat(people.size()).isEqualTo(4);
-      assertThat(people.stream().map(PersonDto::getLocation)).allMatch(Predicate.isEqual(
-          PersonDto.LocationEnum.CITY));
+      assertThat(people.stream().map(PersonDto::getLocation).allMatch(Predicate.isEqual(
+          PersonDto.LocationEnum.CITY))).isTrue();
     }
 
   }
