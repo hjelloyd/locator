@@ -21,7 +21,7 @@ public class FindPeopleWithMongo {
 
   private final CityCoordinateProperties cityCoordinates;
 
-  private static final Double EARTH_RADIUS = 3963.2;
+  private static final Double AVERAGE_EARTH_RADIUS = 3958.8;
 
   public List<Person> execute(String city, Integer distance) {
     if (cityCoordinates.getLongitude().get(city.toLowerCase()) == null ||
@@ -35,7 +35,7 @@ public class FindPeopleWithMongo {
     Circle circle = new Circle(
         new Point(cityCoordinates.getLongitude().get(city.toLowerCase())
             , cityCoordinates.getLatitude().get(city.toLowerCase())),
-        distance.doubleValue() / EARTH_RADIUS);
+        distance.doubleValue() / AVERAGE_EARTH_RADIUS);
     return personRepository.findPeopleWithinACircle(circle);
   }
 }

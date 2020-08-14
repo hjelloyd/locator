@@ -21,7 +21,15 @@ public class LocatorApi implements LocatorInterfaceApi {
       Integer distance) {
     distance = distance == null ? 50 : distance;
     log.info("Received a request to get people from {}, and {} miles arround it", city, distance);
-    return ResponseEntity.ok(locatorManager.getPeopleUsingMongoPoint(city, distance));
+    return ResponseEntity.ok(locatorManager.getPeopleUsingMongo(city, distance));
+  }
+
+  @Override
+  public ResponseEntity<List<PersonDto>> getPeopleInOrAroundACityHaversine(String city,
+      Integer distance) {
+    distance = distance == null ? 50 : distance;
+    log.info("Received a request to get people from {}, and {} miles arround it", city, distance);
+    return ResponseEntity.ok(locatorManager.getPeopleUsingHaversine(city, distance));
   }
 
 }

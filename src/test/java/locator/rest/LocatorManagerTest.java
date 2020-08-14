@@ -7,9 +7,11 @@ import java.util.function.Predicate;
 import generated.rest.locator.model.PersonDto;
 import generated.rest.user.UserServiceApi;
 import locator.services.FindPeopleWithMongo;
+import locator.services.FindUsersByHaversineFormula;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -35,35 +37,68 @@ public class LocatorManagerTest {
   @Mock
   private FindPeopleWithMongo findPeopleWithMongo;
 
+  @Mock
+  private FindUsersByHaversineFormula findUsersByHaversineFormula;
+
   private LocatorManager locatorManager;
 
   private static final String LONDON = "london";
 
   @BeforeEach
   void setup() {
-    locatorManager = new LocatorManager(userServiceApi, findPeopleWithMongo);
+    locatorManager = new LocatorManager(userServiceApi, findPeopleWithMongo, findUsersByHaversineFormula);
   }
 
-  @Test
-  void when_a_lower_case_city_is_entered_it_is_capitalized() {
-    when(userServiceApi.getUsersByCity("London")).thenReturn(aDefaultCityUserDtoResponse());
-    lenient().when(userServiceApi.getUsersByCity(LONDON)).thenReturn(Collections.emptyList());
-    when(findPeopleWithMongo.execute(any(), any())).thenReturn(Collections.emptyList());
+  @Nested
+  class Mongo_Method_Tests {
 
-    List<PersonDto> people = locatorManager.getPeopleUsingMongoPoint(LONDON, 50);
-    assertThat(people.size()).isEqualTo(2);
-    verify(userServiceApi, never()).getUsersByCity(LONDON);
+    @Test
+    void when_a_lower_case_city_is_entered_it_is_capitalized() {
+      when(userServiceApi.getUsersByCity("London")).thenReturn(aDefaultCityUserDtoResponse());
+      lenient().when(userServiceApi.getUsersByCity(LONDON)).thenReturn(Collections.emptyList());
+      when(findPeopleWithMongo.execute(any(), any())).thenReturn(Collections.emptyList());
+
+      List<PersonDto> people = locatorManager.getPeopleUsingMongo(LONDON, 50);
+      assertThat(people.size()).isEqualTo(2);
+      verify(userServiceApi, never()).getUsersByCity(LONDON);
+    }
+
+    @Test
+    void when_duplicate_people_are_found_then_a_distinct_list_is_returned_and_CITY_is_prioritized() {
+      when(userServiceApi.getUsersByCity("London")).thenReturn(aDefaultAllUsersDtoResponse());
+      when(findPeopleWithMongo.execute(any(), any())).thenReturn(aDefaultListOfPeople());
+
+      List<PersonDto> people = locatorManager.getPeopleUsingMongo(LONDON, 50);
+      assertThat(people.size()).isEqualTo(4);
+      assertThat(people.stream().map(PersonDto::getLocation)).allMatch(Predicate.isEqual(
+          PersonDto.LocationEnum.CITY));
+    }
   }
 
-  @Test
-  void when_duplicate_people_are_found_then_a_distinct_list_is_returned_and_CITY_is_prioritized() {
-    when(userServiceApi.getUsersByCity("London")).thenReturn(aDefaultAllUsersDtoResponse());
-    when(findPeopleWithMongo.execute(any(), any())).thenReturn(aDefaultListOfPeople());
+  @Nested
+  class Haversine_Method_Tests {
+    @Test
+    void when_a_lower_case_city_is_entered_it_is_capitalized() {
+      when(userServiceApi.getUsersByCity("London")).thenReturn(aDefaultCityUserDtoResponse());
+      lenient().when(userServiceApi.getUsersByCity(LONDON)).thenReturn(Collections.emptyList());
+      when(findUsersByHaversineFormula.execute(any(), any())).thenReturn(Collections.emptyList());
 
-    List<PersonDto> people = locatorManager.getPeopleUsingMongoPoint(LONDON, 50);
-    assertThat(people.size()).isEqualTo(4);
-    assertThat(people.stream().map(PersonDto::getLocation)).allMatch(Predicate.isEqual(
-        PersonDto.LocationEnum.CITY));
+      List<PersonDto> people = locatorManager.getPeopleUsingHaversine(LONDON, 50);
+      assertThat(people.size()).isEqualTo(2);
+      verify(userServiceApi, never()).getUsersByCity(LONDON);
+    }
+
+    @Test
+    void when_duplicate_people_are_found_then_a_distinct_list_is_returned_and_CITY_is_prioritized() {
+      when(userServiceApi.getUsersByCity("London")).thenReturn(aDefaultAllUsersDtoResponse());
+      when(findUsersByHaversineFormula.execute(any(), any())).thenReturn(aDefaultAllUsersDtoResponse());
+
+      List<PersonDto> people = locatorManager.getPeopleUsingHaversine(LONDON, 50);
+      assertThat(people.size()).isEqualTo(4);
+      assertThat(people.stream().map(PersonDto::getLocation)).allMatch(Predicate.isEqual(
+          PersonDto.LocationEnum.CITY));
+    }
+
   }
 
 }

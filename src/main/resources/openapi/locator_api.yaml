@@ -31,7 +31,7 @@ paths:
         required: false
         type: integer
     get:
-      description: finds people within a city or a given distance arround the city using a mongo based algoritim
+      description: finds people within a city or a given distance arround the city using a mongo based method
       responses:
         '200':
           description: Success
@@ -40,6 +40,28 @@ paths:
             items:
               $ref: '#/definitions/PersonDto'
       operationId: get_people_in_or_around_a_city_mongo
+      tags:
+        - locatorInterface
+  /haversine/people/city/{city}:
+    parameters:
+      - name: city
+        in: path
+        required: true
+        type: string
+      - name: distance
+        in: query
+        required: false
+        type: integer
+    get:
+      description: finds people within a city or a given distance arround the city using the haversine based algoritim
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PersonDto'
+      operationId: get_people_in_or_around_a_city_haversine
       tags:
         - locatorInterface
 

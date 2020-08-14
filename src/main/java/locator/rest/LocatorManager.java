@@ -11,9 +11,12 @@ import generated.rest.locator.model.PersonDto;
 import generated.rest.user.UserServiceApi;
 import locator.rest.mappers.PersonDtoMapper;
 import locator.services.FindPeopleWithMongo;
+import locator.services.FindUsersByHaversineFormula;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import static generated.rest.locator.model.PersonDto.LocationEnum.SURROUNDING_AREA;
 
 @RequiredArgsConstructor
 @Component
@@ -24,10 +27,11 @@ public class LocatorManager {
 
   private final FindPeopleWithMongo findPeopleWithMongo;
 
-  public List<PersonDto> getPeopleUsingMongoPoint(String city, Integer distance) {
-    List<PersonDto> peopleFromCity = userServiceApi.getUsersByCity(capitalizeCity(city)).stream()
-        .map(PersonDtoMapper::fromUserDto).collect(Collectors.toList());
-    log.info("Received {} people from the city {}", peopleFromCity.size(), city);
+  private final FindUsersByHaversineFormula findUsersByHaversineFormula;
+
+  public List<PersonDto> getPeopleUsingMongo(String city, Integer distance) {
+    log.info("Using Mongo method to find people");
+    List<PersonDto> peopleFromCity = getPeopleFromCity(city);
 
     List<PersonDto> peopleFromSurroundingArea = findPeopleWithMongo.execute(city, distance).stream()
         .map(PersonDtoMapper::fromPerson).collect(Collectors.toList());
@@ -36,6 +40,27 @@ public class LocatorManager {
         city);
     peopleFromCity.addAll(peopleFromSurroundingArea);
     return getDistinctPeople(peopleFromCity);
+  }
+
+  public List<PersonDto> getPeopleUsingHaversine(String city, Integer distance) {
+    log.info("Using Haversine method to find people");
+    List<PersonDto> peopleFromCity = getPeopleFromCity(city);
+
+    List<PersonDto> peopleFromSurroundingArea = findUsersByHaversineFormula.execute(city, distance)
+        .stream().map(user -> PersonDtoMapper.fromUserDto(user, SURROUNDING_AREA))
+        .collect(Collectors.toList());
+
+    log.info("Received {} people from surrounding the city {}", peopleFromSurroundingArea.size(),
+        city);
+    peopleFromCity.addAll(peopleFromSurroundingArea);
+    return getDistinctPeople(peopleFromCity);
+  }
+
+  private List<PersonDto> getPeopleFromCity(String city) {
+    List<PersonDto> peopleFromCity = userServiceApi.getUsersByCity(capitalizeCity(city)).stream()
+        .map(PersonDtoMapper::fromUserDto).collect(Collectors.toList());
+    log.info("Received {} people from the city {}", peopleFromCity.size(), city);
+    return peopleFromCity;
   }
 
   private String capitalizeCity(String city) {

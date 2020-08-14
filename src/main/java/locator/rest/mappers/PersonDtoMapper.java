@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.NONE)
 public class PersonDtoMapper {
 
-  public static PersonDto fromUserDto(UserDto userDto){
+  public static PersonDto fromUserDto(UserDto userDto, PersonDto.LocationEnum location){
+    location = location == null? PersonDto.LocationEnum.CITY: location;
     return new PersonDto()
         .id(userDto.getId())
         .ipAddress(userDto.getIpAddress())
@@ -20,7 +21,11 @@ public class PersonDtoMapper {
         .email(userDto.getEmail())
         .latitude(userDto.getLatitude())
         .longitude(userDto.getLongitude())
-        .location(PersonDto.LocationEnum.CITY);
+        .location(location);
+  }
+
+  public static PersonDto fromUserDto(UserDto userDto){
+    return fromUserDto(userDto, null);
   }
 
   public static PersonDto fromPerson(Person person){

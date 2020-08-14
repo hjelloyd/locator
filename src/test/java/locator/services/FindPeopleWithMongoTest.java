@@ -33,7 +33,7 @@ public class FindPeopleWithMongoTest {
   private HashMap<String, Double> longitude;
   private Circle circle;
 
-  private static final Double EARTH_RADIUS = 3963.2;
+  private static final Double EARTH_RADIUS = 3958.8;
 
   private static final String LONDON = "london";
 
